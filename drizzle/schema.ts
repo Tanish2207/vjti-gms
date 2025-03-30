@@ -28,7 +28,9 @@ export const staff = pgTable("staff", {
 	staffId: integer("staff_id").primaryKey().generatedAlwaysAsIdentity({ name: "staff_staff_id_seq", startWith: 1, increment: 1, minValue: 1, maxValue: 2147483647, cache: 1 }),
 	name: varchar({ length: 100 }).notNull(),
 	mobile: varchar({ length: 10 }).notNull(),
-});
+}, (table) => [
+	unique("staff_mobile_key").on(table.mobile),
+]);
 
 export const keys = pgTable("keys", {
 	keyId: integer("key_id").primaryKey().generatedAlwaysAsIdentity({ name: "keys_key_id_seq", startWith: 1, increment: 1, minValue: 1, maxValue: 2147483647, cache: 1 }),
