@@ -15,6 +15,7 @@ import {
 export default function VehiclesForm() {
   const [formData, setFormData] = useState({
     driverName: "",
+    driverMobile: "",
     vehicleNo: "",
     vehicleType: "",
     entryTime: "",
@@ -36,17 +37,32 @@ export default function VehiclesForm() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (
-      formData.entryTime &&
-      formData.exitTime &&
-      formData.exitTime <= formData.entryTime
-    ) {
-      alert("Exit time must be later than entry time.");
-      return;
+    console.log("Submitted:", formData);
+    const trimmedForm = { name: formData.driverName, mobile: formData.driverMobile, vehicleNo: formData.vehicleNo};
+    try {
+      const response = await fetch("/api/vehicles", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(trimmedForm),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log("Vehicle visit added successfully:", data);
+        alert("Vehicle visit added successfully!");
+      } else {
+        const errorData = await response.json();
+        console.error("Error adding vehicle visit:", errorData);
+        alert(`Error: ${errorData.message}`);
+      }
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      alert("An error occurred while submitting the form.");
     }
-    console.log("🚗 Vehicle Entry Submitted:", formData);
   };
 
   return (
@@ -88,6 +104,14 @@ export default function VehiclesForm() {
               <SelectItem value="Other">Other</SelectItem>
             </SelectContent>
           </Select>
+
+          <Input
+            name="driverMobile"
+            placeholder="Drive Mobile"
+            value={formData.driverMobile}
+            onChange={handleChange}
+            required
+          />
 
           <Input
             type="time"

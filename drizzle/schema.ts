@@ -51,14 +51,20 @@ export const keys = pgTable("keys", {
 });
 
 export const vehicleVisits = pgTable("vehicle_visits", {
-	vehicleId: integer("vehicle_id").primaryKey().generatedAlwaysAsIdentity({ name: "vehicle_visits_vehicle_id_seq", startWith: 1, increment: 1, minValue: 1, maxValue: 2147483647, cache: 1 }),
+	id: integer().primaryKey().generatedAlwaysAsIdentity({ name: "vehicle_visits_vehicle_id_seq", startWith: 1, increment: 1, minValue: 1, maxValue: 2147483647, cache: 1 }),
 	entryTime: timestamp("entry_time", { withTimezone: true, mode: 'string' }).defaultNow(),
 	exitTime: timestamp("exit_time", { withTimezone: true, mode: 'string' }).defaultNow(),
 	visitorId: integer("visitor_id").notNull(),
+	vehicleNo: varchar("vehicle_no", { length: 12 }).notNull(),
 }, (table) => [
 	foreignKey({
 			columns: [table.visitorId],
 			foreignColumns: [visitors.visitorId],
 			name: "vehvisits_visitors_fk"
+		}).onUpdate("cascade").onDelete("cascade"),
+	foreignKey({
+			columns: [table.vehicleNo],
+			foreignColumns: [vehicleCat.vehicleNo],
+			name: "vehvisits_vehcat_fk"
 		}).onUpdate("cascade").onDelete("cascade"),
 ]);

@@ -21,6 +21,7 @@ export async function GET() {
 
 export async function POST(req) {
   try {
+    console.log(req)
     const body = await req.json();
     const { name: reqName, mobile: reqMobile } = body;
     const res = await db
