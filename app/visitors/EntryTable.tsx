@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 import {
   Table,
   TableHeader,
@@ -11,13 +11,14 @@ import {
 } from "@/components/ui/table";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { toast } from "sonner";
 
 interface Entry {
   id: number;
   name: string;
   mobile: string;
   inTime: string;
-  outTime: string;
+  outTime: string | null;
   reason: string;
   department: string;
 }
@@ -27,19 +28,35 @@ export default function VisitorsTable() {
 
   useEffect(() => {
     async function fetchData() {
-      // Replace with actual API call
-      const mockData: Entry[] = [
-        {
-          id: 1,
-          name: 'Rupak Gupta',
-          mobile: '9137423687',
-          inTime: '5:06',
-          outTime: '8:01',
-          reason: 'Fest Promotion',
-          department: 'All',
-        },
-      ];
-      setEntries(mockData);
+      try {
+        const response = await fetch("/api/humans");
+        if (!response.ok) {
+          throw new Error("Failed to fetch visitor data");
+        }
+        const data = await response.json();
+
+        interface EntryData {
+          get_id: number;
+          get_name: string;
+          get_mobile: string;
+          get_entry: string;
+          get_exit: string | null;
+        }
+
+        const formattedEntries: Entry[] = data.map((entry: EntryData) => ({
+          id: entry.get_id,
+          name: entry.get_name,
+          mobile: entry.get_mobile,
+          inTime: new Date(entry.get_entry).toLocaleTimeString(),
+          outTime: entry.get_exit ? new Date(entry.get_exit).toLocaleTimeString() : "N/A",
+          reason: "Unknown", // Placeholder as API does not provide reason
+          department: "General", // Placeholder as API does not provide department
+        }));
+        toast.success("Data fetched successfully!");
+        setEntries(formattedEntries);
+      } catch (error) {
+        toast.error(error ? `Error fetching data: ${error}` : "Error fetching data");
+      }
     }
 
     fetchData();

@@ -1,30 +1,62 @@
 "use client";
 
-import { useState } from 'react';
+import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from "@/components/ui/select";
+import { toast } from "sonner";
 
-export default function VisitorsForm() {
+export default function VisitorsForm({ onEntryAdded }: { onEntryAdded: () => void }) {
   const [formData, setFormData] = useState({
-    name: '',
-    mobile: '',
-    extraPeople: '+0',
-    time: '',
-    exitTime: '',
-    reason: '',
-    department: '',
+    name: "",
+    mobile: "",
+    extraPeople: "+0",
+    time: "",
+    exitTime: "",
+    reason: "",
+    department: "",
   });
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const [loading, setLoading] = useState(false);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Submitted:', formData);
-    // Send formData to your backend
+    setLoading(true);
+    try {
+      const response = await fetch("/api/humans", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: formData.name,
+          mobile: formData.mobile,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to submit visitor data");
+      }
+      toast.success("Visitor entry recorded successfully!");
+      setFormData({
+        name: "",
+        mobile: "",
+        extraPeople: "+0",
+        time: "",
+        exitTime: "",
+        reason: "",
+        department: "",
+      });
+
+      onEntryAdded(); // Refresh table after submission
+    } catch {
+      toast.error("Failed to submit visitor entry.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -52,10 +84,9 @@ export default function VisitorsForm() {
             required
           />
 
-          <Input type="time" name="time" placeholder="Entry Time" className="placeholder:text-gray-300" value={formData.time} onChange={handleChange} required />
-          <Input type="time" name="exitTime" placeholder="Exit Time" className="placeholder:text-gray-300" value={formData.exitTime} onChange={handleChange} required />
+          <Input type="time" name="time" className="placeholder:text-gray-300" value={formData.time} onChange={handleChange} required />
+          <Input type="time" name="exitTime" className="placeholder:text-gray-300" value={formData.exitTime} onChange={handleChange} />
 
-          {/* Reason Dropdown */}
           <Select onValueChange={(value) => setFormData({ ...formData, reason: value })}>
             <SelectTrigger className="placeholder:text-gray-300">
               <SelectValue placeholder="Select Reason" />
@@ -68,7 +99,6 @@ export default function VisitorsForm() {
             </SelectContent>
           </Select>
 
-          {/* Department Dropdown */}
           <Select onValueChange={(value) => setFormData({ ...formData, department: value })}>
             <SelectTrigger className="placeholder:text-gray-300">
               <SelectValue placeholder="Select Department" />
@@ -82,8 +112,8 @@ export default function VisitorsForm() {
             </SelectContent>
           </Select>
 
-          <Button type="submit" className="col-span-2 bg-white text-blue-700 hover:bg-gray-200">
-            Submit
+          <Button type="submit" disabled={loading} className="col-span-2 bg-white text-blue-700 hover:bg-gray-200">
+            {loading ? "Submitting..." : "Submit"}
           </Button>
         </form>
       </CardContent>

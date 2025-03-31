@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { drizzle } from "drizzle-orm/node-postgres";
+// import { drizzle } from "drizzle-orm/node-postgres";
 import { db } from "@/configs/db";
 import { visitors, humanVisits } from "@/drizzle/schema";
 import { eq } from "drizzle-orm";
@@ -20,7 +20,7 @@ interface Visitor {
 // Define the structure of the database response for humanVisits
 interface HumanVisit {
   visitorId: number;
-  entryTime: string;
+  entryTime: string | null;
 }
 
 export async function POST(req: NextRequest): Promise<NextResponse> {
@@ -66,9 +66,8 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     console.log(humanVisit);
 
     return NextResponse.json({ message: "OK" }, { status: 200 });
-  } catch (error: any) {
-    console.log(error);
-    return NextResponse.json({ message: error.message }, { status: 500 });
+  } catch (error: unknown) {
+    return NextResponse.json({ message: (error as Error).message }, { status: 500 });
   }
 }
 
@@ -86,8 +85,8 @@ export async function GET(): Promise<NextResponse> {
       .innerJoin(humanVisits, eq(visitors.visitorId, humanVisits.visitorId));
 
     return NextResponse.json(res, { status: 200 });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.log(error);
-    return NextResponse.json({ message: error.message }, { status: 500 });
+    return NextResponse.json({ message: (error as Error).message }, { status: 500 });
   }
 }
