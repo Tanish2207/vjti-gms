@@ -5,11 +5,30 @@ import { visitors, humanVisits } from "@/drizzle/schema";
 import { eq } from "drizzle-orm";
 import moment from "moment";
 
-export async function POST(req) {
+// Define the structure of the request body
+interface VisitorRequestBody {
+  name: string;
+  mobile: string;
+}
+
+// Define the structure of the database response for visitors
+interface Visitor {
+  prevVisId: number;
+  prevVisName: string;
+}
+
+// Define the structure of the database response for humanVisits
+interface HumanVisit {
+  visitorId: number;
+  entryTime: string;
+}
+
+export async function POST(req: NextRequest): Promise<NextResponse> {
   try {
-    const body = await req.json();
+    const body: VisitorRequestBody = await req.json();
     const { name: reqName, mobile: reqMobile } = body;
-    const prevVisitor = await db
+
+    const prevVisitor: Visitor[] = await db
       .select({
         prevVisId: visitors.visitorId,
         prevVisName: visitors.name,
@@ -17,7 +36,7 @@ export async function POST(req) {
       .from(visitors)
       .where(eq(visitors.mobile, reqMobile));
 
-    let globalVisitorId;
+    let globalVisitorId: number;
     if (prevVisitor.length > 0) {
       console.log("previous visitor found", prevVisitor);
       globalVisitorId = prevVisitor[0].prevVisId;
@@ -31,30 +50,29 @@ export async function POST(req) {
         .returning({
           id: visitors.visitorId,
         });
-      console.log(vst);
 
+      console.log(vst);
       globalVisitorId = vst[0].id;
     }
-    // console.log("global vis id = ", globalVisitorId);
 
-    console.log(
-      await db
-        .insert(humanVisits)
-        .values({
-          visitorId: globalVisitorId,
-          entryTime: moment(),
-        })
-        .returning()
-    );
+    const humanVisit: HumanVisit[] = await db
+      .insert(humanVisits)
+      .values({
+        visitorId: globalVisitorId,
+        entryTime: moment().toISOString(), // Ensure entryTime is in ISO format
+      })
+      .returning();
+
+    console.log(humanVisit);
 
     return NextResponse.json({ message: "OK" }, { status: 200 });
-  } catch (error) {
+  } catch (error: any) {
     console.log(error);
-    return NextResponse.json({ message: error }, { status: 500 });
+    return NextResponse.json({ message: error.message }, { status: 500 });
   }
 }
 
-export async function GET() {
+export async function GET(): Promise<NextResponse> {
   try {
     const res = await db
       .select({
@@ -67,10 +85,9 @@ export async function GET() {
       .from(visitors)
       .innerJoin(humanVisits, eq(visitors.visitorId, humanVisits.visitorId));
 
-    // console.log(res);
-    return NextResponse.json({ res }, { status: 200 });
-  } catch (error) {
+    return NextResponse.json(res, { status: 200 });
+  } catch (error: any) {
     console.log(error);
-    return NextResponse.json({ message: error }, { status: 500 });
+    return NextResponse.json({ message: error.message }, { status: 500 });
   }
 }
