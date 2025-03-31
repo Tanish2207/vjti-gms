@@ -24,6 +24,11 @@ export const humanVisits = pgTable("human_visits", {
 		}).onUpdate("cascade").onDelete("cascade"),
 ]);
 
+export const reasons = pgTable("reasons", {
+	id: integer().primaryKey().generatedAlwaysAsIdentity({ name: "reasons_id_seq", startWith: 1, increment: 1, minValue: 1, maxValue: 2147483647, cache: 1 }),
+	reasonName: varchar("reason_name", { length: 30 }).notNull(),
+});
+
 export const staff = pgTable("staff", {
 	staffId: integer("staff_id").primaryKey().generatedAlwaysAsIdentity({ name: "staff_staff_id_seq", startWith: 1, increment: 1, minValue: 1, maxValue: 2147483647, cache: 1 }),
 	name: varchar({ length: 100 }).notNull(),
