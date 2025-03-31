@@ -12,6 +12,8 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
+import { useSearch } from "@/context/SearchContext";
+import LoadingSpinner from "@/components/ui/throbber";
 
 interface Entry {
   id: number;
@@ -24,15 +26,18 @@ interface Entry {
 }
 
 export default function VisitorsTable() {
+  const { searchTerm } = useSearch();
   const [entries, setEntries] = useState<Entry[]>([]);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     async function fetchData() {
+      setEntries([]);
+      setLoading(true);
       try {
-        const response = await fetch("/api/humans");
-        if (!response.ok) {
-          throw new Error("Failed to fetch visitor data");
-        }
+        const response = await fetch(`/api/humans?term=${encodeURIComponent(searchTerm)}`);
+        if (!response.ok) throw new Error("Failed to fetch visitor data");
+
         const data = await response.json();
 
         interface EntryData {
@@ -49,18 +54,19 @@ export default function VisitorsTable() {
           mobile: entry.get_mobile,
           inTime: new Date(entry.get_entry).toLocaleTimeString(),
           outTime: entry.get_exit ? new Date(entry.get_exit).toLocaleTimeString() : "N/A",
-          reason: "Unknown", // Placeholder as API does not provide reason
-          department: "General", // Placeholder as API does not provide department
+          reason: "Unknown",
+          department: "General",
         }));
         toast.success("Data fetched successfully!");
+        setLoading(false);
         setEntries(formattedEntries);
       } catch (error) {
-        toast.error(error ? `Error fetching data: ${error}` : "Error fetching data");
+        toast.error(error ? `${error}` : "Error fetching data");
       }
     }
 
     fetchData();
-  }, []);
+  }, [searchTerm]);
 
   return (
     <Card className="w-full">
@@ -68,7 +74,7 @@ export default function VisitorsTable() {
         <CardTitle>Visitor Entries</CardTitle>
       </CardHeader>
       <CardContent>
-        <Table>
+        {loading ? <LoadingSpinner /> : (<Table>
           <TableHeader>
             <TableRow>
               <TableHead>Name</TableHead>
@@ -95,7 +101,7 @@ export default function VisitorsTable() {
               </TableRow>
             ))}
           </TableBody>
-        </Table>
+        </Table>)}
       </CardContent>
     </Card>
   );
