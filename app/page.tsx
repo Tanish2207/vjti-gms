@@ -1,4 +1,5 @@
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 export default function Home() {
   return (
@@ -6,7 +7,9 @@ export default function Home() {
       <h1 className="text-4xl text-blue-400 font-bold">
         Welcome to VJTI-GMS (Gate Management System)
       </h1>
+      <Link href="/dashboard">
         <Button>Click me </Button>
+      </Link>
     </div>
   );
 }
