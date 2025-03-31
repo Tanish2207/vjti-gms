@@ -68,6 +68,16 @@ export default function VisitorsTable() {
     fetchData();
   }, [searchTerm]);
 
+  const handleExit = (id: number) => {
+    setEntries((prevEntries) =>
+      prevEntries.map((entry) =>
+        entry.id === id
+          ? { ...entry, outTime: new Date().toLocaleTimeString() }
+          : entry
+      )
+    );
+  };
+
   return (
     <Card className="w-full">
       <CardHeader>
@@ -83,6 +93,7 @@ export default function VisitorsTable() {
               <TableHead>Out Time</TableHead>
               <TableHead>Reason</TableHead>
               <TableHead>Department/Class</TableHead>
+              <TableHead>Action</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -91,12 +102,24 @@ export default function VisitorsTable() {
                 <TableCell className="font-semibold">{entry.name}</TableCell>
                 <TableCell>{entry.mobile}</TableCell>
                 <TableCell>{entry.inTime}</TableCell>
-                <TableCell>{entry.outTime}</TableCell>
+                <TableCell>{entry.outTime || "Not Exited"}</TableCell>
                 <TableCell>
                   <Badge className="bg-blue-700 text-white">{entry.reason}</Badge>
                 </TableCell>
                 <TableCell>
                   <Badge variant="secondary">{entry.department}</Badge>
+                </TableCell>
+                <TableCell>
+                  {!entry.outTime ? (
+                    <Badge
+                      className="bg-red-500 text-white cursor-default hover:bg-[#2d2d2d]"
+                      onClick={() => handleExit(entry.id)}
+                    >
+                      Mark Exit
+                    </Badge>
+                  ) : (
+                    <span className="text-green-500">Exited</span>
+                  )}
                 </TableCell>
               </TableRow>
             ))}
