@@ -10,7 +10,7 @@ export default function VehiclesPage() {
   return (
     <>
       <Navbar />
-      <div className="flex h-screen bg-[#fafafb]">
+      <div className="flex h-full bg-[#fafafb]">
         {/* Sidebar */}
         {/* <Sidebar isOpen={isSidebarOpen} toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)} /> */}
         <Sidebar />

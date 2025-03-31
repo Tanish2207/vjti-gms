@@ -13,13 +13,13 @@ export default function VisitorsPage() {
   return (
     <>
       <Navbar />
-      <div className="flex h-screen bg-[#fafafb]">
+      <div className="flex h-full bg-[#fafafb]">
         {/* Sidebar */}
         {/* <Sidebar isOpen={isSidebarOpen} toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)} /> */}
         <Sidebar />
 
         <main className="flex flex-col w-full gap-4 py-4 px-4">
-          <VisitorsForm />
+          <VisitorsForm onEntryAdded={() => {}} />
           <VisitorsTable />
         </main>
       </div>

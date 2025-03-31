@@ -18,7 +18,7 @@ interface VehicleEntry {
   vehicleNo: string;
   vehicleType: string;
   entryTime: string;
-  exitTime: string;
+  exitTime: string | null;
   reason: string;
   department: string;
   length: string;
@@ -39,7 +39,7 @@ export default function VehiclesTable() {
           vehicleNo: "XYZ 1234",
           vehicleType: "Truck",
           entryTime: "10:30",
-          exitTime: "14:00",
+          exitTime: null,
           reason: "Delivery",
           department: "Logistics",
           length: "6.5",
@@ -52,6 +52,14 @@ export default function VehiclesTable() {
 
     fetchData();
   }, []);
+
+  const handleExit = (id: number) => {
+    setEntries((prevEntries) =>
+      prevEntries.map((entry) =>
+        entry.id === id ? { ...entry, exitTime: new Date().toLocaleTimeString() } : entry
+      )
+    );
+  };
 
   return (
     <Card className="w-full">
@@ -70,6 +78,7 @@ export default function VehiclesTable() {
               <TableHead>Reason</TableHead>
               <TableHead>Department</TableHead>
               <TableHead>Dimensions (L×W×H) (m)</TableHead>
+              <TableHead>Action</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -79,7 +88,7 @@ export default function VehiclesTable() {
                 <TableCell>{entry.vehicleNo}</TableCell>
                 <TableCell>{entry.vehicleType}</TableCell>
                 <TableCell>{entry.entryTime}</TableCell>
-                <TableCell>{entry.exitTime}</TableCell>
+                <TableCell>{entry.exitTime ? entry.exitTime : "N/A"}</TableCell>
                 <TableCell>
                   <Badge className="bg-blue-700 text-white">{entry.reason}</Badge>
                 </TableCell>
@@ -88,6 +97,18 @@ export default function VehiclesTable() {
                 </TableCell>
                 <TableCell>
                   {entry.length} × {entry.width} × {entry.height}
+                </TableCell>
+                <TableCell>
+                  {!entry.exitTime ? (
+                    <Badge
+                      className="bg-red-500 text-white cursor-default hover:bg-[#2d2d2d]"
+                      onClick={() => handleExit(entry.id)}
+                    >
+                      Mark Exit
+                    </Badge>
+                  ) : (
+                    <span className="text-green-500">Exited</span>
+                  )}
                 </TableCell>
               </TableRow>
             ))}

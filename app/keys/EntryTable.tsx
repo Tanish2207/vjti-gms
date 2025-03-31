@@ -17,7 +17,7 @@ interface KeyEntry {
   personName: string;
   keyType: string;
   issueTime: string;
-  returnTime: string;
+  returnTime: string | null;
   reason: string;
   department: string;
 }
@@ -34,7 +34,7 @@ export default function EntryTable() {
           personName: "John Doe",
           keyType: "Room Key",
           issueTime: "09:30",
-          returnTime: "12:00",
+          returnTime: null,
           reason: "Maintenance",
           department: "IT",
         },
@@ -44,6 +44,14 @@ export default function EntryTable() {
 
     fetchData();
   }, []);
+
+  const handleReturnKey = (id: number) => {
+    setEntries((prevEntries) =>
+      prevEntries.map((entry) =>
+        entry.id === id ? { ...entry, returnTime: new Date().toLocaleTimeString() } : entry
+      )
+    );
+  };
 
   return (
     <Card className="w-full">
@@ -60,6 +68,7 @@ export default function EntryTable() {
               <TableHead>Return Time</TableHead>
               <TableHead>Reason</TableHead>
               <TableHead>Department</TableHead>
+              <TableHead>Action</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -68,12 +77,24 @@ export default function EntryTable() {
                 <TableCell className="font-semibold">{entry.personName}</TableCell>
                 <TableCell>{entry.keyType}</TableCell>
                 <TableCell>{entry.issueTime}</TableCell>
-                <TableCell>{entry.returnTime}</TableCell>
+                <TableCell>{entry.returnTime || "Not Returned"}</TableCell>
                 <TableCell>
                   <Badge className="bg-blue-700 text-white">{entry.reason}</Badge>
                 </TableCell>
                 <TableCell>
                   <Badge variant="secondary">{entry.department}</Badge>
+                </TableCell>
+                <TableCell>
+                  {!entry.returnTime ? (
+                    <Badge
+                      className="bg-red-500 text-white cursor-default hover:bg-[#2d2d2d]"
+                      onClick={() => handleReturnKey(entry.id)}
+                    >
+                      Return Key
+                    </Badge>
+                  ) : (
+                    <span className="text-green-500">Returned</span>
+                  )}
                 </TableCell>
               </TableRow>
             ))}

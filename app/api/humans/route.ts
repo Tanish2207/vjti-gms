@@ -1,23 +1,19 @@
 import { NextRequest, NextResponse } from "next/server";
-// import { drizzle } from "drizzle-orm/node-postgres";
 import { db } from "@/configs/db";
 import { visitors, humanVisits } from "@/drizzle/schema";
-import { eq } from "drizzle-orm";
+import { eq, ilike, or } from "drizzle-orm";
 import moment from "moment";
 
-// Define the structure of the request body
 interface VisitorRequestBody {
   name: string;
   mobile: string;
 }
 
-// Define the structure of the database response for visitors
 interface Visitor {
   prevVisId: number;
   prevVisName: string;
 }
 
-// Define the structure of the database response for humanVisits
 interface HumanVisit {
   visitorId: number;
   entryTime: string | null;
@@ -59,7 +55,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       .insert(humanVisits)
       .values({
         visitorId: globalVisitorId,
-        entryTime: moment().toISOString(), // Ensure entryTime is in ISO format
+        entryTime: moment().toISOString(),
       })
       .returning();
 
@@ -71,8 +67,11 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   }
 }
 
-export async function GET(): Promise<NextResponse> {
+export async function GET(req: NextRequest): Promise<NextResponse> {
   try {
+    const url = new URL(req.url);
+    const term = url.searchParams.get("term") || "";
+
     const res = await db
       .select({
         get_name: visitors.name,
@@ -82,7 +81,8 @@ export async function GET(): Promise<NextResponse> {
         get_id: humanVisits.visitorId,
       })
       .from(visitors)
-      .innerJoin(humanVisits, eq(visitors.visitorId, humanVisits.visitorId));
+      .innerJoin(humanVisits, eq(visitors.visitorId, humanVisits.visitorId))
+      .where(or(ilike(visitors.name, `%${term}%`), ilike(visitors.mobile, `%${term}%`)));
 
     return NextResponse.json(res, { status: 200 });
   } catch (error: unknown) {
