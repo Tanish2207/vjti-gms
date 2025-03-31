@@ -29,6 +29,14 @@ export const reasons = pgTable("reasons", {
 	reasonName: varchar("reason_name", { length: 30 }).notNull(),
 });
 
+export const vehicleCat = pgTable("vehicle_cat", {
+	id: integer().primaryKey().generatedAlwaysAsIdentity({ name: "vehicle_cat_id_seq", startWith: 1, increment: 1, minValue: 1, maxValue: 2147483647, cache: 1 }),
+	vehicleNo: varchar("vehicle_no", { length: 12 }).notNull(),
+	category: varchar({ length: 30 }),
+}, (table) => [
+	unique("vehicle_cat_vehicle_no_key").on(table.vehicleNo),
+]);
+
 export const staff = pgTable("staff", {
 	staffId: integer("staff_id").primaryKey().generatedAlwaysAsIdentity({ name: "staff_staff_id_seq", startWith: 1, increment: 1, minValue: 1, maxValue: 2147483647, cache: 1 }),
 	name: varchar({ length: 100 }).notNull(),
@@ -46,4 +54,11 @@ export const vehicleVisits = pgTable("vehicle_visits", {
 	vehicleId: integer("vehicle_id").primaryKey().generatedAlwaysAsIdentity({ name: "vehicle_visits_vehicle_id_seq", startWith: 1, increment: 1, minValue: 1, maxValue: 2147483647, cache: 1 }),
 	entryTime: timestamp("entry_time", { withTimezone: true, mode: 'string' }).defaultNow(),
 	exitTime: timestamp("exit_time", { withTimezone: true, mode: 'string' }).defaultNow(),
-});
+	visitorId: integer("visitor_id").notNull(),
+}, (table) => [
+	foreignKey({
+			columns: [table.visitorId],
+			foreignColumns: [visitors.visitorId],
+			name: "vehvisits_visitors_fk"
+		}).onUpdate("cascade").onDelete("cascade"),
+]);

@@ -1,5 +1,5 @@
 import { relations } from "drizzle-orm/relations";
-import { visitors, humanVisits } from "./schema";
+import { visitors, humanVisits, vehicleVisits } from "./schema";
 
 export const humanVisitsRelations = relations(humanVisits, ({one}) => ({
 	visitor: one(visitors, {
@@ -10,4 +10,12 @@ export const humanVisitsRelations = relations(humanVisits, ({one}) => ({
 
 export const visitorsRelations = relations(visitors, ({many}) => ({
 	humanVisits: many(humanVisits),
+	vehicleVisits: many(vehicleVisits),
+}));
+
+export const vehicleVisitsRelations = relations(vehicleVisits, ({one}) => ({
+	visitor: one(visitors, {
+		fields: [vehicleVisits.visitorId],
+		references: [visitors.visitorId]
+	}),
 }));
