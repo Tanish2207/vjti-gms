@@ -19,7 +19,7 @@ export default function VisitorsPage() {
         <Sidebar />
 
         <main className="flex flex-col w-full gap-4 py-4 px-4">
-          <VisitorsForm />
+          <VisitorsForm onEntryAdded={() => {}} />
           <VisitorsTable />
         </main>
       </div>
