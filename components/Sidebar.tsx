@@ -1,11 +1,14 @@
-'use client';
+"use client";
 
+import { usePathname } from 'next/navigation';
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { Home, Users, Car, Key } from "lucide-react";
+import { Users, Car, Key } from "lucide-react";
 import Link from "next/link";
 
 const Sidebar = () => {
+  const pathname = usePathname();
+
   return (
     <aside className="w-[20%] min-h-screen bg-transparent p-4">
       {/* Connect New Account Button */}
@@ -15,24 +18,37 @@ const Sidebar = () => {
 
       {/* Menu Items */}
       <nav className="space-y-2">
-        <Link href="#" className="flex items-center space-x-2 text-gray-700 hover:text-black">
-          <Home className="w-5 h-5" />
-          <span>Dashboard</span>
-        </Link>
+        <div className="text-xs text-gray-400 mt-4 mb-2">ENTRIES</div>
 
-        <div className="text-xs text-gray-400 mt-4 mb-2">ANALYTICS</div>
-
-        <Link href="#" className={cn("flex items-center space-x-2 p-2 rounded-lg", "bg-blue-100 text-blue-600")}>  
+        <Link 
+          href="/visitors" 
+          className={cn(
+            "flex items-center space-x-2 p-2 rounded-lg", 
+            pathname === "/visitors" ? "bg-blue-100 text-blue-600" : "text-gray-700 hover:text-black"
+          )}
+        >  
           <Users className="w-5 h-5" />
           <span>Visitors</span>
         </Link>
 
-        <Link href="#" className="flex items-center space-x-2 text-gray-700 hover:text-black">
+        <Link 
+          href="/vehicles" 
+          className={cn(
+            "flex items-center space-x-2 p-2 rounded-lg", 
+            pathname === "/vehicles" ? "bg-blue-100 text-blue-600" : "text-gray-700 hover:text-black"
+          )}
+        >
           <Car className="w-5 h-5" />
           <span>Vehicles</span>
         </Link>
 
-        <Link href="#" className="flex items-center space-x-2 text-gray-700 hover:text-black">
+        <Link 
+          href="/keys" 
+          className={cn(
+            "flex items-center space-x-2 p-2 rounded-lg", 
+            pathname === "/keys" ? "bg-blue-100 text-blue-600" : "text-gray-700 hover:text-black"
+          )}
+        >
           <Key className="w-5 h-5" />
           <span>Keys</span>
         </Link>

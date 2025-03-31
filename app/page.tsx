@@ -7,7 +7,7 @@ export default function Home() {
       <h1 className="text-4xl text-blue-400 font-bold">
         Welcome to VJTI-GMS (Gate Management System)
       </h1>
-      <Link href="/dashboard">
+      <Link href="/visitors">
         <Button>Click me </Button>
       </Link>
     </div>
