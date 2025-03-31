@@ -20,33 +20,33 @@ const Sidebar = () => {
       <nav className="space-y-2">
         <div className="text-xs text-gray-400 mt-4 mb-2">ENTRIES</div>
 
-        <Link 
-          href="/visitors" 
+        <Link
+          href="/visitors"
           className={cn(
-            "flex items-center space-x-2 p-2 rounded-lg", 
-            pathname === "/visitors" ? "bg-blue-100 text-blue-600" : "text-gray-700 hover:text-black"
+            "flex items-center space-x-2 p-2 rounded-lg",
+            pathname === "/visitors" ? "bg-blue-100 text-blue-600" : "text-gray-700 hover:bg-blue-100 hover:text-black"
           )}
-        >  
+        >
           <Users className="w-5 h-5" />
           <span>Visitors</span>
         </Link>
 
-        <Link 
-          href="/vehicles" 
+        <Link
+          href="/vehicles"
           className={cn(
-            "flex items-center space-x-2 p-2 rounded-lg", 
-            pathname === "/vehicles" ? "bg-blue-100 text-blue-600" : "text-gray-700 hover:text-black"
+            "flex items-center space-x-2 p-2 rounded-lg",
+            pathname === "/vehicles" ? "bg-blue-100 text-blue-600" : "text-gray-700 hover:bg-blue-100 hover:text-black"
           )}
         >
           <Car className="w-5 h-5" />
           <span>Vehicles</span>
         </Link>
 
-        <Link 
-          href="/keys" 
+        <Link
+          href="/keys"
           className={cn(
-            "flex items-center space-x-2 p-2 rounded-lg", 
-            pathname === "/keys" ? "bg-blue-100 text-blue-600" : "text-gray-700 hover:text-black"
+            "flex items-center space-x-2 p-2 rounded-lg",
+            pathname === "/keys" ? "bg-blue-100 text-blue-600" : "text-gray-700 hover:bg-blue-100 hover:text-black"
           )}
         >
           <Key className="w-5 h-5" />
