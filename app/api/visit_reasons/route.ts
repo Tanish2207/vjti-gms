@@ -3,8 +3,8 @@ import { NextResponse } from "next/server";
 import { db } from "@/configs/db";
 
 interface Reason {
-  reasonId: number;
-  reasonName: string;
+  get_id: number;
+  get_reason: string;
 }
 export async function GET(): Promise<NextResponse> {
   try {
@@ -16,8 +16,7 @@ export async function GET(): Promise<NextResponse> {
       .from(reasons);
 
     return NextResponse.json(res);
-  } catch (error: any) {
-    console.log(error);
-    return NextResponse.json({ message: error.message }, { status: 500 });
+  } catch (error: unknown) {
+    return NextResponse.json({ message: (error as Error).message }, { status: 500 });
   }
 }
