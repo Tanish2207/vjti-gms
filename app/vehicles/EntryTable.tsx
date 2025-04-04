@@ -13,53 +13,68 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 
 interface VehicleEntry {
-  id: number;
-  driverName: string;
-  vehicleNo: string;
-  vehicleType: string;
-  entryTime: string;
-  exitTime: string | null;
+  get_id: number;
+  get_name: string;
+  get_vehicle_no: string;
+  get_category: string | null;
+  get_entry: string;
+  get_exit: string | null;
   reason: string;
   department: string;
-  length: string;
-  width: string;
-  height: string;
+  length: string | null;
+  width: string | null;
+  height: string | null;
 }
+
 
 export default function VehiclesTable() {
   const [entries, setEntries] = useState<VehicleEntry[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
 
+
+  // Fetch vehicle entries on mount
   useEffect(() => {
-    async function fetchData() {
-      // Replace with actual API call
-      const mockData: VehicleEntry[] = [
-        {
-          id: 1,
-          driverName: "John Doe",
-          vehicleNo: "XYZ 1234",
-          vehicleType: "Truck",
-          entryTime: "10:30",
-          exitTime: null,
-          reason: "Delivery",
-          department: "Logistics",
-          length: "6.5",
-          width: "2.3",
-          height: "3.0",
-        },
-      ];
-      setEntries(mockData);
-    }
+    const fetchVehicles = async () => {
+      try {
+        const response = await fetch("/api/vehicles", {
+          method: "GET",
+        });
 
-    fetchData();
+        if (!response.ok) {
+          throw new Error("Failed to fetch vehicle data");
+        }
+
+        const data: VehicleEntry[] = await response.json();
+        setEntries(data);
+      } catch (err: any) {
+        console.error("Error fetching vehicles:", err);
+        setError(err.message || "An error occurred while fetching vehicles.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchVehicles();
   }, []);
 
   const handleExit = (id: number) => {
     setEntries((prevEntries) =>
       prevEntries.map((entry) =>
-        entry.id === id ? { ...entry, exitTime: new Date().toLocaleTimeString() } : entry
+        entry.get_id === id
+          ? { ...entry, get_exit: new Date().toISOString() } // Use ISO format for consistency
+          : entry
       )
     );
   };
+
+  if (loading) {
+    return <p>Loading...</p>;
+  }
+
+  if (error) {
+    return <p>Error: {error}</p>;
+  }
 
   return (
     <Card className="w-full">
@@ -83,26 +98,37 @@ export default function VehiclesTable() {
           </TableHeader>
           <TableBody>
             {entries.map((entry) => (
-              <TableRow key={entry.id}>
-                <TableCell className="font-semibold">{entry.driverName}</TableCell>
-                <TableCell>{entry.vehicleNo}</TableCell>
-                <TableCell>{entry.vehicleType}</TableCell>
-                <TableCell>{entry.entryTime}</TableCell>
-                <TableCell>{entry.exitTime ? entry.exitTime : "N/A"}</TableCell>
+              <TableRow key={entry.get_id}>
+                <TableCell className="font-semibold">
+                  {entry.get_name}
+                </TableCell>
+                <TableCell>{entry.get_vehicle_no}</TableCell>
+                <TableCell>{entry.get_category || "N/A"}</TableCell>
                 <TableCell>
-                  <Badge className="bg-blue-700 text-white">{entry.reason}</Badge>
+                  {new Date(entry.get_entry).toLocaleString()}
                 </TableCell>
                 <TableCell>
-                  <Badge variant="secondary">{entry.department}</Badge>
+                  {entry.get_exit
+                    ? new Date(entry.get_exit).toLocaleString()
+                    : "N/A"}
                 </TableCell>
                 <TableCell>
-                  {entry.length} × {entry.width} × {entry.height}
+                  <Badge className="bg-blue-700 text-white">
+                    {entry.reason || "N/A"}
+                  </Badge>
                 </TableCell>
                 <TableCell>
-                  {!entry.exitTime ? (
+                  <Badge variant="secondary">{entry.department || "N/A"}</Badge>
+                </TableCell>
+                <TableCell>
+                  {entry.length || "N/A"} × {entry.width || "N/A"} ×{" "}
+                  {entry.height || "N/A"}
+                </TableCell>
+                <TableCell>
+                  {!entry.get_exit ? (
                     <Badge
-                      className="bg-red-500 text-white cursor-default hover:bg-[#2d2d2d]"
-                      onClick={() => handleExit(entry.id)}
+                      className="bg-red-500 text-white cursor-pointer hover:bg-[#2d2d2d]"
+                      onClick={() => handleExit(entry.get_id)}
                     >
                       Mark Exit
                     </Badge>

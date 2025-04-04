@@ -5,7 +5,7 @@ import { sql } from "drizzle-orm"
 
 export const visitors = pgTable("visitors", {
 	visitorId: integer("visitor_id").primaryKey().generatedAlwaysAsIdentity({ name: "visitors_visitor_id_seq", startWith: 1, increment: 1, minValue: 1, maxValue: 2147483647, cache: 1 }),
-	name: varchar({ length: 100 }).notNull(),
+	name: varchar({ length: 100 }),
 	mobile: varchar({ length: 10 }),
 }, (table) => [
 	unique("visitors_mobile_key").on(table.mobile),
@@ -14,7 +14,7 @@ export const visitors = pgTable("visitors", {
 export const humanVisits = pgTable("human_visits", {
 	visitId: integer("visit_id").generatedAlwaysAsIdentity({ name: "human_visits_visit_id_seq", startWith: 1, increment: 1, minValue: 1, maxValue: 2147483647, cache: 1 }),
 	entryTime: timestamp("entry_time", { withTimezone: true, mode: 'string' }).defaultNow(),
-	exitTime: timestamp("exit_time", { withTimezone: true, mode: 'string' }).defaultNow(),
+	exitTime: timestamp("exit_time", { withTimezone: true, mode: 'string' }),
 	visitorId: integer("visitor_id").notNull(),
 }, (table) => [
 	foreignKey({

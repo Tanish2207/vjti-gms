@@ -9,6 +9,7 @@ interface VehicleRequestBody {
   name: string;
   mobile: string;
   vehicleNo: string;
+  category: string
 }
 
 // Define the structure of the database responses
@@ -37,9 +38,10 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       name: req_name,
       mobile: req_mobile,
       vehicleNo: req_vehicleNo,
+      category: req_category,
     } = body;
 
-    console.log(req_name, req_mobile, req_vehicleNo);
+    console.log(req_name, req_mobile, req_vehicleNo, req_category);
 
     // Check if the vehicleNo exists in the vehicle_cat table
     const existingVehicle: Vehicle[] = await db
@@ -80,7 +82,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     if (existingVehicle.length === 0) {
       const vh_visit: InsertedVehicle[] = await db
         .insert(vehicleCat)
-        .values({ vehicleNo: req_vehicleNo })
+        .values({ vehicleNo: req_vehicleNo, category: req_category })
         .returning({
           veh_no: vehicleCat.vehicleNo,
         });
@@ -103,7 +105,10 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     return NextResponse.json({ updatedVisitor }, { status: 201 });
   } catch (error: unknown) {
     console.log(error);
-    return NextResponse.json({ message: (error as Error).message }, { status: 500 });
+    return NextResponse.json(
+      { message: (error as Error).message },
+      { status: 500 }
+    );
   }
 }
 
@@ -111,6 +116,7 @@ export async function GET(): Promise<NextResponse> {
   try {
     const res = await db
       .select({
+        get_id: vehicleVisits.id,
         get_name: visitors.name,
         get_mobile: visitors.mobile,
         get_vehicle_no: vehicleCat.vehicleNo,
@@ -125,6 +131,9 @@ export async function GET(): Promise<NextResponse> {
     return NextResponse.json(res, { status: 200 });
   } catch (error: unknown) {
     console.log(error);
-    return NextResponse.json({ message: (error as Error).message }, { status: 500 });
+    return NextResponse.json(
+      { message: (error as Error).message },
+      { status: 500 }
+    );
   }
 }

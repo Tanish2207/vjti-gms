@@ -12,7 +12,11 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-export default function VehiclesForm() {
+
+interface VehiclesTableProps {
+  reasonArr: { get_reason_id: number; get_reason: string }[];
+}
+export default function VehiclesForm({ reasonArr }: VehiclesTableProps) {
   const [formData, setFormData] = useState({
     driverName: "",
     driverMobile: "",
@@ -139,9 +143,12 @@ export default function VehiclesForm() {
               <SelectValue placeholder="Select Reason" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="Delivery">Delivery</SelectItem>
-              <SelectItem value="Event">Event</SelectItem>
-              <SelectItem value="Other">Other</SelectItem>
+
+              {reasonArr.map((reason) => (
+                <SelectItem key={reason.get_reason_id} value={reason.get_reason}>
+                  {reason.get_reason}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
 

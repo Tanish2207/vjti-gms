@@ -78,7 +78,7 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
         get_mobile: visitors.mobile,
         get_entry: humanVisits.entryTime,
         get_exit: humanVisits.exitTime,
-        get_id: humanVisits.visitorId,
+        get_id: humanVisits.visitId,
       })
       .from(visitors)
       .innerJoin(humanVisits, eq(visitors.visitorId, humanVisits.visitorId))

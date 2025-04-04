@@ -41,7 +41,7 @@ export default function VisitorsTable() {
         if (!response.ok) throw new Error("Failed to fetch visitor data");
 
         const data = await response.json();
-
+        console.log(data)
         interface EntryData {
           get_id: number;
           get_name: string;
@@ -49,6 +49,7 @@ export default function VisitorsTable() {
           get_entry: string;
           get_exit: string | null;
         }
+
 
         const formattedEntries: Entry[] = data.map((entry: EntryData) => ({
           id: entry.get_id,
