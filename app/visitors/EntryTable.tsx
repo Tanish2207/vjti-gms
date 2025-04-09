@@ -229,7 +229,7 @@ export default function VisitorsTable() {
                                     }
                                   }}
                                 >
-                                  ➕ Add "{editedData.reason}"
+                                  ➕ Add &quot;{editedData.reason}&quot;
                                 </div>
                               )}
                             </div>
