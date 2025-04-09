@@ -42,23 +42,6 @@ export default function Navbar() {
         />
       </div>
 
-      {/* Icons and Profile */}
-      <div className="flex items-center space-x-4">
-        <div className="relative cursor-pointer">
-          <Mail className="w-6 h-6 text-gray-600" />
-          <span className="absolute -top-1 -right-2 bg-blue-500 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">
-            2
-          </span>
-        </div>
-        <Bell className="w-6 h-6 text-gray-600 cursor-pointer" />
-        <Image
-          src="/profile.jpg"
-          alt="User Profile"
-          width={32}
-          height={32}
-          className="rounded-full cursor-pointer"
-        />
-      </div>
     </nav>
   );
 }
