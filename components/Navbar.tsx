@@ -1,8 +1,6 @@
 "use client";
 
 import { Input } from "@/components/ui/input";
-import { Bell, Mail } from "lucide-react";
-import Image from "next/image";
 import Link from "next/link";
 import { useSearch } from "@/context/SearchContext";
 import { useEffect, useState } from "react";

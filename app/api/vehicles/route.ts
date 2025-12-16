@@ -15,7 +15,7 @@ interface VehicleRequestBody {
 // Define the structure of the database responses
 interface Visitor {
   prevVisId: number;
-  prevVisName: string;
+  prevVisName: string | null;
 }
 
 interface Vehicle {

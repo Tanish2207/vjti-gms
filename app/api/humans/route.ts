@@ -11,7 +11,7 @@ interface VisitorRequestBody {
 
 interface Visitor {
   prevVisId: number;
-  prevVisName: string;
+  prevVisName: string | null;
 }
 
 interface HumanVisit {

@@ -32,11 +32,12 @@ interface VehicleEntry {
 
 export default function VehiclesTable() {
   const [entries, setEntries] = useState<VehicleEntry[]>([]);
-  const [vehicleTypes, setVehicleTypes] = useState(["Car", "Bike", "Truck", "Van", "Bus"]);
   const [visitReasons, setVisitReasons] = useState(["Delivery", "Maintenance", "Inspection"]);
   const [editingEntry, setEditingEntry] = useState<number | null>(null);
   const [editedData, setEditedData] = useState<Partial<VehicleEntry>>({});
   const [searchTerm, setSearchTerm] = useState("");
+
+  const vehicleTypes = ["Car", "Bike", "Truck", "Van", "Bus"];
 
   useEffect(() => {
     async function fetchData() {

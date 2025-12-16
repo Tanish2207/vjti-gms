@@ -24,7 +24,7 @@ export default function VehiclesPage() {
 
         const data: Reason[] = await response.json();
         setReasonArr(data); // Update state with fetched reasons
-      } catch (err: any) {
+      } catch (err) {
         console.error("Error fetching reasons:", err);
       }
     };
@@ -41,7 +41,7 @@ export default function VehiclesPage() {
 
         <main className="flex flex-col w-full gap-4 py-4 px-4">
           <VehiclesForm reasonArr={reasonArr} />
-          <VehiclesTable reasonArr={reasonArr} />
+          <VehiclesTable />
         </main>
       </div>
     </>
